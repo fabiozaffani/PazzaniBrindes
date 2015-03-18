@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="pt-br">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title></title>
+        <meta name="generator" content="Studio 3 http://aptana.com/">
+        <meta name="author" content="Fabio Zaffani">
+        <title>Pazzani Brindes</title>
+    </head>
+    <body>
+        <table cellpadding="0" cellspacing="0" border="0" align="center" width="630">
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="[#$URL]img_01.gif" style="display:block;" border="0" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="99%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fffdfa">
+                            <tr>
+                                <td width="6" bgcolor="#ffffff"></td>
+                                <td width="1" bgcolor="#f8f8f8"></td>
+                                <td width="1" bgcolor="#f4f4f4"></td>
+                                <td width="1" bgcolor="#e1e0dc"></td>
+                                <td width="1" bgcolor="#ecebe7"></td>
+                                <td width="26" ></td>
+                                <td width="555">
+                                    <br/>
+                                    Prezado(a) [#$to_name#],<br/>
+                                    <br/>
+                                    Sua solicita&ccedil;&atilde;o de or&ccedil;amento foi recebida com sucesso. Ela ser&aacute; enviada a um de nossos vendedores e em breve entraremos em contato.<br/>
+                                    <br/>
+                                    Segue abaixo informa&ccedil;&otilde;es de sua solicita&ccedil;&atilde;o:<br/>
+                                    <br/>
+
+                                    <table width="100%" border="0" cellpadding="5" cellspacing="3">
+                                        <thead>
+                                            <tr>
+                                                <th width="20%" style="border-bottom:2px solid #980000;color:#900;">Codigo</th>
+                                                <th width="60%" style="border-bottom:2px solid #980000;color:#900;">Produto</th>
+                                                <th width="20%" style="border-bottom:2px solid #980000;color:#900;">Quantidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody>
+                                        [#$order_info#]
+                                        </tbody>
+                                    </table>
+
+                                    <br/>
+                                    Retornaremos o mais breve possível através do seu e-mail [#$to_email#] ou seu telefone [#$to_telefone#].<br/>
+                                    <br/>
+                                    Atenciosamente,<br/>
+                                    <br/>
+                                    Equipe [#$store_name#].
+                                </td>
+                                <td width="27"></td>
+                                <td width="1" bgcolor="#ecebe7"></td>
+                                <td width="1" bgcolor="#e1e0dc"></td>
+                                <td width="1" bgcolor="#f4f4f4"></td>
+                                <td width="1" bgcolor="#f8f8f8"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td><img src="[#$URL]img_03.jpg" style="display:block;" border="0" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

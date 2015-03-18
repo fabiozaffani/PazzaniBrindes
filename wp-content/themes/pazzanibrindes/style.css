@@ -1,0 +1,1243 @@
+/*
+Theme Name: Pazzani Brindes
+Theme URI: http://www.pazzanibrindes.com.br
+Author: Fabio Zaffani <fabiozaffani@gmail.com>
+Author URI: http://www.plulz.com
+Description: Theme based on the Twenty Eleven theme
+Version: 1.0
+License: GNU General Public License
+License URI: license.txt
+Tags: light, white, two-columns, right-sidebar, fixed-width, custom-menu, editor-style, theme-options, translation-ready
+*/
+
+/* =Reset default browser CSS. Based on work by Eric Meyer: http://meyerweb.com/eric/tools/css/reset/index.html
+-------------------------------------------------------------- */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	border: 0;
+	font-family: inherit;
+	font-size: 100%;
+	font-style: inherit;
+	font-weight: inherit;
+	margin: 0;
+	outline: 0;
+	padding: 0;
+	vertical-align: baseline;
+}
+:focus {/* remember to define focus styles! */
+	outline: 0;
+}
+body {
+	
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+table {/* tables still need 'cellspacing="0"' in the markup */
+	border-collapse: separate;
+	border-spacing: 0;
+}
+caption, th, td {
+	font-weight: normal;
+	text-align: left;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+a img {
+	border: 0;
+}
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+/* =Clearfix
+----------------------------------------------- */
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+.clearfix {
+	display: inline-block;
+}
+
+html[xmlns] .clearfix {
+	display: block;
+}
+
+* html .clearfix {
+	height: 1%;
+}
+
+/* =skeleton
+----------------------------------------------- */
+#wrapper, #footer{
+    min-width: 1000px;
+}
+
+#header-inner,
+#center-inner,
+#footer-inner,
+#header-inner-lower-menu{
+    width: 1000px;
+    margin: 0 auto;
+}
+    #carousel, #carousel-inner{
+        height: 340px
+    }
+
+#header{
+    margin-top:5px;
+    border-bottom: 1px solid #999;
+    color: #fff;
+    background: #666;
+    height:105px;
+}
+    #header-inner{
+        position: relative;
+        padding: 5px 0 0 0;
+        height: 60px;
+    }
+
+    #header-inner-lower{
+        background: #900;
+        height: 40px;
+    }
+
+        #header-inner-lower-menu{
+            height: 40px;
+        }
+
+
+#header, #center{
+    width:100%;
+}
+
+#footer{
+    width: 100%;
+    padding: 10px 0 30px 0
+}
+    #footer-inner{
+        width:980px;
+    }
+/* = Geral
+----------------------------------------------- */
+
+body{
+    /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font-family: 'Trebuchet MS', 'Arial';
+    color:#333333;
+    font-size:14px;
+    background: #333;
+}
+
+h1,h2,h3,h4,h5,h6{
+    color:#333;
+    padding:10px 0 20px 0;
+    clear: both
+}
+h1{
+    font-size:30px;
+}
+h2{
+    font-size:25px;
+}
+h3{
+    font-size:21px;
+}
+p, #content li{
+    font-family: Arial;
+    margin-bottom:10px;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+    p.check{
+        background:transparent url("plulz/webroot/img/ico/check.gif") no-repeat top left;
+        padding-left:25px;
+        line-height:20px;
+    }
+
+a, a:link, a:visited{
+    color:#900;
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+.odd{
+    margin-left: 0 !important;
+}
+
+.even{
+    margin-right: 0 !important;
+}
+
+.middle{
+    margin: 0 13px;
+}
+
+.side{
+    margin: 0 !important
+}
+
+.round{
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+.left{
+    float: left;
+}
+
+.right{
+    float: right;
+}
+
+a.button,
+button.button,
+input.button{
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    color: #fff !important;
+    background: #900 !important;
+    border: 2px solid #900 !important;
+     -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    padding: 4px;
+    margin-top: 15px;
+}
+    a.button:hover, button.button:hover, input.button:hover{
+        color:#900 !important;
+        background: #fff !important;
+        text-decoration: none
+    }
+
+blockquote{
+    padding: 0 0 0 30px;
+    font-style: italic;
+    line-height:18px;
+}
+
+strong{
+    font-weight: bold
+}
+.first{
+    margin-left:0 !important;
+}
+
+.last{
+    margin-right:0 !important;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input{
+    display: inline-block;
+    height: 20px;
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #555555;
+    vertical-align: middle;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+label{
+    float: left;
+    width: 160px;
+    padding: 5px 15px 0 0;
+    text-align: right;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+    /* Images */
+    .wp-caption{
+        background:  #EAEAEA;
+    }
+
+    .aligncenter{
+        display: block;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .alignleft{
+        float:left;
+    }
+
+    .alignright{
+        float: right;
+    }
+
+    .alignnone{
+        display: block;
+        clear: both;
+    }
+
+    /* Form List */
+    #FaleConoscoPagina ul.formList{
+        width:100%;
+    }
+
+    ul.formList li{
+        line-height: 28px;
+        width: 100%;
+        padding: 0 0 5px 0;
+        margin: 0;
+    }
+
+    ul.formList li label{
+        line-height: 22px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: right;
+    }
+
+    ul.formList li input,
+    ul.formList li textarea{
+        width: 50% !important;
+    }
+
+    ul.formList li textarea{
+        height:150px;
+    }
+
+    ul.formList li.submit{
+        padding-top:15px;
+        padding-left: 25%;
+    }
+
+    /* Erros */
+
+    ul.erros{
+        background: #ffebe8;
+        padding: 15px;
+        margin:  10px 0;
+        border: 1px solid #dd3c10;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+    }
+        ul.erros li{
+            margin: 0 0 4px 0;
+        }
+
+    /* Erro page */
+
+    .errormin{
+        color: #fff;
+        background: #666;
+        position: absolute;
+        width: 85px;
+        height: 16px;
+        font-size: 10px;
+        line-height: 16px;
+        text-align: center;
+        font-style: italic;
+        display: none;
+        left: -2px;
+        bottom: 0;
+    }
+
+    /* Paginate */
+
+    #navigation {padding:0; margin:0 auto;display:block;width:400px;clear:both;height:40px;line-height:40px;}
+    #navigation li {display:inline; list-style:none;}
+    #navigation a {background:#ddd; border:1px solid #ccc; color:#666; margin-right:4px; padding:3px 6px; text-align:center; text-decoration:none;}
+    #navigation a:hover, #navigation a:active {background:#ccc; color:#888;}
+    #navigation .title {color:#555; margin-right:4px;}
+    #navigation .gap {color:#999; margin-right:4px;}
+    #navigation .current {color:#fff; background:#900; border:1px solid #900; margin-right:4px; padding:3px 6px;}
+    #navigation .page {}
+    #navigation .previous, #navigation .next {}
+
+/* =Header
+----------------------------------------------- */
+
+#header p{
+    color:#fff;
+}
+#utility{
+    padding-top: 15px;
+    float:right;
+    height:30px;
+    width: 706px;
+}
+
+#socials{
+    width: 100%;
+    height: 30px;
+    overflow: hidden;
+}
+    #socials li{
+        float: right;
+    }
+
+#site-title{
+    float:left;
+    padding: 0;
+}
+#site-title a {
+    position: absolute;
+    background: transparent url('plulz/webroot/img/bg/logo_alt.png') no-repeat top left;
+    width:264px;
+    height:73px;
+    display:block;
+    left: 5px;
+    text-indent:-99999px;
+}
+
+    /* Menu */
+    #header .menu-primeiro-container{
+        float: left;
+        width: 755px;
+        height: 40px;
+    }
+
+    #header .menu-primeiro-container #menu-inner{
+        width:100%;
+    }
+
+        #header ul.menu li{
+            position: relative;
+            float:left;
+            margin: 6px 15px 0 15px;
+            color: #fff;
+        }
+
+        #header ul.menu li:hover,
+        #header ul.menu li.current-menu-item{
+            background: #700;
+        }
+            #header ul.menu li.current-menu-item a{
+                color: #fff !important;
+            }
+
+           #header ul.menu li a{
+               display: block;
+               padding: 7px 11px;
+               font-size:16px;
+               color: #fff;
+           }
+
+           #header ul.menu li:hover a{
+               text-decoration:none;
+           }
+
+
+        /* Submenus */
+
+        #header ul.menu li:hover .sub-menu{
+            display: block;
+        }
+
+        #header ul.menu .sub-menu{
+            background: #fff;
+            box-shadow: rgba(0,0,0,0.3) 0 2px 3px;
+            border:2px solid #700;
+            position: absolute;
+            display: none;
+            z-index: 99999;
+            top:30px;
+            left:0;
+            width: 400px !important;
+            height: auto !important;
+        }
+            #header ul.menu .sub-menu li{
+                position:relative;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #header ul.menu .sub-menu li a{
+                font-size: 13px;
+                font-weight: normal;
+                height: auto;
+                line-height: 1.4em;
+                padding: 10px 10px;
+                width: 180px;
+                color: #900;
+            }
+                #header ul.menu .sub-menu li.current-menu-item a{
+                    color: #fff !important;
+                }
+
+                #header ul.menu .sub-menu li a:hover{
+                    text-decoration:none;
+                    background: #900;
+                    color: #fff !important;
+                }
+
+
+    /* Atendimento */
+
+    #atendimentoHeader{
+        float: left;
+        text-align: center;
+        padding: 0;
+        height: 40px;
+        font-size: 15px;
+        width:243px;
+        color: #ffffff;
+        line-height: 40px;
+    }
+
+/* =Center
+----------------------------------------------- */
+    #center{
+        background: #EAEAEA;
+        border-top: 1px solid #fbfbfb;
+        padding-bottom: 20px;
+    }
+    /* container */
+    #center #container{
+        padding: 20px 0 0 15px;
+        float:left;
+        width: 743px;
+    }
+    /* Post List */
+    .post-list-title, .post-list{
+        margin-bottom: 10px !important;
+        background: #fff;
+        border: 1px solid #E2E2E2;
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .post-list{
+        width:217px;
+        height: 290px;
+        float:left;
+    }
+
+        .post-list h3{
+            font-size:16px;
+            padding: 3px 0;
+            text-align: center;
+        }
+
+    .post-list-entry{
+        text-align: center;
+        width:100%;
+        margin: 0 0 10px 0;
+    }
+    .post-list-img{
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    /* Content */
+
+    #page{
+        width: 100%;
+    }
+
+    p#breadcrumb{
+        margin-top: 15px;
+        margin-bottom: 0;
+    }
+
+    .post,
+    .produto,
+    #produto-contato{
+        border: 1px solid #E2E2E2;
+        padding: 3px 15px 15px;
+        background: #fff;
+        width: 713px;
+    }
+
+        #produto-contato{
+            padding-top: 15px;
+        }
+
+    /** Contato Pagina de Produto **/
+
+        #produto-contato ul.formList{
+            width: 693px;
+            padding: 0 10px 10px 10px;
+            background: #EAEAEA;
+        }
+
+        #produto-contato div.left,
+        #produto-contato div.right{
+            width: 340px;
+            height: 150px;
+        }
+
+        #produto-contato div input{
+            width: 215px !important;
+        }
+
+        #produto-contato div textarea{
+            width: 326px !important;
+            height: 100px;
+        }
+
+        #produto-contato li.title{
+            width: 693px;
+            font-size: 22px;
+            padding: 5px 10px;
+            margin: 0 0 20px -10px;
+            background: #900;
+            color: #fff;
+        }
+
+        #produto-contato div label{
+            width: 75px;
+        }
+
+        #produto-contato .submit{
+            padding-top: 0;
+            width: 50%;
+            padding-left: 0;
+            float: right;
+        }
+
+    #content,
+    #imagem-post{
+        float:right;
+        width:320px;
+    }
+
+        #imagem-post{ width: 310px; }
+
+    #content ul{
+        margin-left:15px;
+    }
+
+    #content ul li{
+        list-style-type:disc;
+    }
+
+    #imagem-post, #galery-post{
+        float: left;
+        border: 1px solid #E2E2E2;
+        background: #fff;
+        padding: 10px;
+    }
+
+    #galery-post{
+        clear: left
+    }
+
+        #galery-post li{
+            float:left;
+            padding:0 10px;
+        }
+
+    .entry-content ul, .entry-content ol{
+        padding: 15px 40px;
+    }
+    .entry-content ul{
+        list-style: disc;
+        list-style-type: disc;
+    }
+
+    .entry-content ol{
+        list-style: decimal;
+        list-style-type: decimal;
+    }
+
+        .entry-content ol li{
+            line-height:20px;
+        }
+
+    /* Related */
+    #relatedTitle{
+        padding-top:25px;
+    }
+
+    #related{
+        clear:both;
+        width:100%
+    }
+
+        #related li{
+            width: 217px;
+            height:270px;
+            float:left;
+            padding:10px;
+        }
+            #related li img{
+                margin-top:10px;
+                margin-left:9px;
+            }
+
+            #related li h4{
+                text-align:center;
+            }
+
+            #related li a{
+                display:block;
+                background:#fff;
+            }
+
+            #related li a:hover{
+                text-decoration:none;
+                background:#eaeaea;
+            }
+
+        /* Formulario Carrinho */
+
+        #FormularioCarrinho label{
+            width: 78px;
+        }
+
+        #AdicionarCarrinho, #FecharCarrinho{
+            height:30px;
+            line-height: 30px;
+            width: 200px;
+        }
+
+            .AjaxLoading{
+                display: none;
+            }
+
+            #ContinuarOrcamento{
+                height: 30px;
+                background: url('plulz/webroot/img/bt/CartContinuarOrcamento.png') no-repeat top left;
+                margin-top: 5px;
+                display: block;
+                text-indent: -9999px;
+            }
+
+    /* Carrinho Fechamento */
+
+    #ReplacementSubmit{
+        width: 240px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    table#CarrinhoDetalhes{
+        width: 100%;
+    }
+
+        table#CarrinhoDetalhes th,
+        table#CarrinhoDetalhes td{
+            position: relative;
+            text-align: left;
+            padding: 0 6px 0 4px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        table#CarrinhoDetalhes th{
+            background: #eaeaea;
+            border-bottom: 1px solid #666;
+            font-weight: bold;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+         table#CarrinhoDetalhes td{
+             line-height: 60px;
+         }
+
+        table#CarrinhoDetalhes .CarrinhoDetalhes_codigo{
+            width: 40px;
+        }
+
+        table#CarrinhoDetalhes .CarrinhoDetalhes_produto{
+            width: 300px;
+        }
+
+        table#CarrinhoDetalhes .CarrinhoDetalhes_imagem{
+            width: 70px;
+        }
+            table#CarrinhoDetalhes .CarrinhoDetalhes_imagem img{
+                vertical-align: middle;
+                margin:  0 auto;
+            }
+
+        table#CarrinhoDetalhes .CarrinhoDetalhes_quantidade{
+            width: 70px !important;
+        }
+            table#CarrinhoDetalhes .CarrinhoDetalhes_quantidade input{
+                width: 70px;
+                /*font-size: 12px;*/
+            }
+
+        table#CarrinhoDetalhes .CarrinhoDetalhes_acoes{
+            width:130px;
+        }
+
+    .info-contato{
+        
+    }
+
+        .info-contato input, .info-contato textarea{
+            /*color: #666;*/
+            /*width: 80%;*/
+            /*font-size: 16px;*/
+        }
+
+    /* 404 and Search Not Found Search Form layout */
+    #post #searchform{
+        width: 640px;
+    }
+
+        #post #searchform #s{
+            width:600px;
+        }
+
+        #post #searchform #searchsubmit{
+            right: 0;
+            width: 30px;
+            left: auto;
+        }
+
+    /* Sidebar */
+
+    #sidebar{
+        background: #fff;
+        border: 1px solid #e2e2e2;
+        padding: 10px;
+        margin: 20px 0 0 0;
+        width: 220px;
+        float: left;
+    }
+
+        #sidebar h3{
+            padding: 0 0 20px 0;
+        }
+
+        #sidebar .widget{
+            margin: 0 0 15px 0;
+            padding:  0 0 15px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        /* Carrinho sidebar */
+
+        h3.carrinhoSidebarTitle{
+            background: transparent url("plulz/webroot/img/ico/cart.png") no-repeat top right;
+        }
+
+        div#CarrinhoSidebar{
+            position:relative;
+        }
+    
+        div.widget table#CarrinhoSidebar_tabela{
+          margin:0 0 10px 0;
+        }
+
+            #CarrinhoSidebar_fechar{
+                width: 87%;
+                margin: 15px auto 10px;
+            }
+
+            table#CarrinhoSidebar_tabela th{
+                font-size: 16px;
+                padding: 3px 0;
+            }
+
+            table#CarrinhoSidebar_tabela .CarrinhoSidebar_produto {
+                width: 200px;
+                text-align: left;
+                padding:2px 0;
+            }
+
+            table#CarrinhoSidebar_tabela .CarrinhoSidebar_quantidade {
+                width: 30px;
+                text-align: right;
+            }
+
+            div.widget table#CarrinhoSidebar_tabela thead{height:30px}
+
+            ul li#cart_content_sidebar table#CarrinhoSidebar_tabela tbody{height:30px;font-size:13px}
+
+            /* Contatos Sidebar */
+
+            div.widget ul#contato li.telefone, div.widget ul#contato li.email{
+                height:30px;
+                line-height:30px;
+                padding-left:30px;
+                width:170px
+            }
+
+            div.widget ul#contato li.telefone{
+                background:url("plulz/webroot/img/ico/telefone-contato.png") no-repeat top left
+            }
+
+            div.widget ul#contato li.email{
+                font-size:12px;
+                background:url("plulz/webroot/img/ico/email-contato.png") no-repeat top left
+            }
+
+            /* Menu sidebar */
+
+            div.widget ul#categorias li{
+                margin-bottom: 7px;
+                background:transparent url('plulz/webroot/img/ico/categorias-icones.jpg') no-repeat top left;
+                height:25px;
+            }
+
+                div.widget ul#categorias li a{
+                    display:block;
+                    height:25px;
+                    line-height:25px;
+                    width:190px;
+                    margin-left:30px;
+                    padding-left: 2px;
+                    background:#fff;
+                }
+
+                /* Agendas */
+
+                    div.widget ul#categorias li.cat-item-105{background-position:-360px 0}
+                        div.widget ul#categorias li.cat-item-105:hover{background-position:-360px -26px}
+						
+				/* Brindes Copa */
+					div.widget ul#categorias li.cat-item-155{background-position:-487px 0}
+                        div.widget ul#categorias li.cat-item-155:hover{background-position:-487px -26px}
+
+                /* Caneta Metalica */
+
+                    div.widget ul#categorias li.cat-item-3{background-position:-120px 0}
+                        div.widget ul#categorias li.cat-item-3:hover{background-position:-120px -25px}
+
+                /* Caneta Plastica */
+
+                    div.widget ul#categorias li.cat-item-4{background-position:-180px 0}
+                        div.widget ul#categorias li.cat-item-4:hover{background-position:-180px -25px}
+
+                /* Chaveiros */
+
+                    /*Sidebar*/
+                    div.widget ul#categorias li.cat-item-5{background-position:-90px 0}
+                        div.widget ul#categorias li.cat-item-5:hover{background-position:-90px -25px}
+
+                /* Chaveiros de Couro */
+
+                    /*Sidebar*/
+                    div.widget ul#categorias li.cat-item-108{background-position:-330px 0}
+                        div.widget ul#categorias li.cat-item-108:hover{background-position:-330px -24px}
+
+                /* Ecológico */
+
+                    /*Sidebar*/
+                    div.widget ul#categorias li.cat-item-141{background-position:-420px 0}
+                        div.widget ul#categorias li.cat-item-141:hover{background-position:-420px -25px}
+
+                /* Estojo para canetas */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-6{background-position:-60px 0}
+                        div.widget ul#categorias li.cat-item-6:hover{background-position:-60px -25px}
+
+                /* Ferramentas */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-7{background-position:0 0}
+                        div.widget ul#categorias li.cat-item-7:hover{background-position:0 -25px}
+
+                /* Lapis */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-124{background-position:-450px 0}
+                    div.widget ul#categorias li.cat-item-124:hover{background-position:-450px -25px}
+
+                /* Linha Feminina */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-8{background-position:-150px 0}
+                        div.widget ul#categorias li.cat-item-8:hover{background-position:-150px -25px}
+
+                /* Material de Escritório */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-9{background-position:-210px 0}
+                        div.widget ul#categorias li.cat-item-9:hover{background-position:-210px -25px}
+
+                /* Pen Drive */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-10{background-position:-240px 0}
+                        div.widget ul#categorias li.cat-item-10:hover{background-position:-240px -25px}
+
+                /* Porta Documento */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-11{background-position:-30px 0}
+                        div.widget ul#categorias li.cat-item-11:hover{background-position:-30px -25px}
+
+                /* Queijo e Vinho */
+
+                    /* Sidebar */
+                    div.widget ul#categorias li.cat-item-80{background-position:-390px 0}
+                    div.widget ul#categorias li.cat-item-80:hover{background-position:-390px -25px}
+
+
+
+                /* Squeeze */
+
+                    /*Sidebar*/
+                    div.widget ul#categorias li.cat-item-13{background-position:-270px 0}
+                        div.widget ul#categorias li.cat-item-13:hover{background-position:-270px -25px}
+
+                /* Sacolas */
+
+                    /*Sidebar*/
+                    div.widget ul#categorias li.cat-item-12{background-position:-300px 0}
+                        div.widget ul#categorias li.cat-item-12:hover{background-position:-300px -25px}
+
+            /* Empresas Relacionadas */
+
+            ul#empresas_relacionadas{
+
+            }
+
+                ul#empresas_relacionadas li{
+                    margin: 3px 0 10px 0;
+                }
+
+/* =Home
+----------------------------------------------- */
+#intro{
+    margin-bottom:20px;
+    position:relative;
+}
+
+    #intro .setas{
+        position:absolute;
+        display:none;
+    }
+
+    #intro #setaSuperior{
+        top:-155px;
+        left:94px;
+    }
+
+    #intro #setaSidebar{
+        top:0;
+        left:-240px;
+    }
+
+    #intro #setaOrcamento{
+        top:-82px;
+        left:-180px;
+    }
+
+/* =Contato
+----------------------------------------------- */
+h3.fecharContatoTitle{
+    text-align:center;
+    padding:0;
+}
+
+/* =Footer
+----------------------------------------------- */
+
+#footer h3{
+    color:#eaeaea;
+    padding-bottom:5px;
+    font-size:24px;
+    text-align:center
+}
+
+#footer .widget-area{
+    float:left;
+    width:100%;
+    margin-bottom: 15px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #2A2A2A;
+}
+    #footer p{
+        color: #fff;
+        text-shadow: 1px 1px 1px #2A2A2A;
+        font-size:12px;
+        font-weight: bold;
+    }
+
+    #footer a, #footer a:link{
+        color: #fff;
+        text-shadow: 1px 1px 1px #2A2A2A;
+    }
+
+        #footer a:hover{
+            text-shadow: none !important;
+        }
+
+    #footer #footer-inner-top, #footer #footer-inner-lower{
+        width:100%;
+    }
+
+        #footer #footer-inner-lower{
+            margin-top:10px;
+        }
+
+        #footer #footer-inner-lower ul{
+            width: 100%;
+        }
+
+        #footer #footer-inner-lower ul li{
+            text-align: center;
+            float: left;
+            height: auto;
+            width: 25%
+        }
+
+    p.footer-bottom{
+        text-align:center;
+        margin-bottom: 0;
+        font-size:11px;
+    }
+
+/* =Searchbar do diabo
+----------------------------------------------- */
+
+#searchform{
+   position:relative;
+   width: 500px;
+   float:right;
+   padding-top: 3px;
+   padding-right: 6px;
+}
+
+    .post #searchform{
+        width: 705px !important;
+    }
+
+#s, #searchsubmit{
+    background: #fbfbfb !important;
+    color: #333 !important;
+    border: solid 1px #e2e2e2;
+}
+
+
+#s{
+    height: 25px;
+    padding-left: 4px;
+    padding-right: 28px;
+    width: 470px;
+    line-height: 25px;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    font-size: 12px;
+}
+    .post #s {
+        width: 675px !important;
+    }
+
+#searchsubmit{
+    cursor: pointer;
+    height: 28px;
+    position: absolute;
+    right: 0;
+    top: 3px;
+}
+
+/*
+ * QUADRO MODAL
+ */
+
+/*---------------------------------------
+
+	LEAN MODAL
+
+-----------------------------------------*/
+#lean_overlay {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    display: none;
+}
+/*---------------------------------------
+
+	EXAMPLES
+
+-----------------------------------------*/
+
+#signup {
+    width: 485px;
+    padding-bottom: 2px;
+    display:none;
+    background: #FFF;
+    border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.7); -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.7); -moz-box-shadow: 0 0px 4px rgba(0,0,0,0.7);
+}
+
+#signup-header { background:  url("plulz/webroot/img/bt/hd-bg.png"); padding: 18px 18px 14px 18px; border-bottom: 1px solid #CCC; border-top-left-radius: 5px; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-right-radius: 5px; -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px; }
+
+#signup-header h2{ color: #444; font-size: 2em; font-weight: 700; margin-bottom: 3px; text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); }
+#signup-header p{ color: #444; font-size: 1.3em; margin: 0; text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); text-shadow: none; line-height: 20px;}
+
+#signup .txt-fld { position: relative; width: 410px; padding: 14px 20px; border-bottom: 1px solid #EEE; text-align: right; }
+#signup .btn-fld { width: 254px; overflow: hidden; padding: 12px 20px 12px 130px; }
+
+#signup .txt-fld label { padding: 8px 0 0 0; display: block; float: left; width: 125px; color: #222; font-size: 1.3em; text-align: left; line-height: 26px; }
+#signup .txt-fld input { width: 244px; padding: 8px; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; font-size: 1.2em; color: #222; background: #F7F7F7; font-family: "Helvetica Neue"; outline: none; border-top: 1px solid #CCC; border-left: 1px solid #CCC; border-right: 1px solid #E7E6E6; border-bottom: 1px solid #E7E6E6; }
+#signup .txt-fld input.good_input { background: #DEF5E1  url("plulz/webroot/img/bt/good.png") 236px center no-repeat; }
+#signup .txt-fld input.error_input { background: #FDE0E0; }
+
+.txt-fld input:focus, .txt-fld textarea:focus { background-color: #FAF9DC; }
+
+#signup #ReplacementEnviar {
+    float: right;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    background: #3F9D4A;
+    border: none;
+    width: auto;
+    overflow: visible;
+    font-size: 1.4em;
+    color: #FFF;
+    padding: 7px 10px;  border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; font-weight: bold; text-shadow: 0 1px 0 rgba(0,0,0,0.4);}
+
+.modal_close { position: absolute; top: 12px; right: 12px; display: block; width: 14px; height: 14px; background:  url("plulz/webroot/img/bt/modal_close.png"); z-index: 2; }
+
+#signup ul.erros{
+    margin: 15px;
+}
+#warn-signup { padding: 20px; font-size: 12px; }
