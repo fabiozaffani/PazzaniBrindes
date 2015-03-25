@@ -21,7 +21,9 @@
  *
  * To apply shortcode tags to content:
  *
- *     $out = do_shortcode( $content );
+ * <code>
+ * $out = do_shortcode($content);
+ * </code>
  *
  * @link http://codex.wordpress.org/Shortcode_API
  *
@@ -50,34 +52,38 @@ $shortcode_tags = array();
  *
  * Simplest example of a shortcode tag using the API:
  *
- *     // [footag foo="bar"]
- *     function footag_func( $atts ) {
- *         return "foo = {
- *             $atts[foo]
- *         }";
- *     }
- *     add_shortcode( 'footag', 'footag_func' );
+ * <code>
+ * // [footag foo="bar"]
+ * function footag_func($atts) {
+ * 	return "foo = {$atts[foo]}";
+ * }
+ * add_shortcode('footag', 'footag_func');
+ * </code>
  *
  * Example with nice attribute defaults:
  *
- *     // [bartag foo="bar"]
- *     function bartag_func( $atts ) {
- *         $args = shortcode_atts( array(
- *             'foo' => 'no foo',
- *             'baz' => 'default baz',
- *         ), $atts );
+ * <code>
+ * // [bartag foo="bar"]
+ * function bartag_func($atts) {
+ * 	extract(shortcode_atts(array(
+ * 		'foo' => 'no foo',
+ * 		'baz' => 'default baz',
+ * 	), $atts));
  *
- *         return "foo = {$args['foo']}";
- *     }
- *     add_shortcode( 'bartag', 'bartag_func' );
+ * 	return "foo = {$foo}";
+ * }
+ * add_shortcode('bartag', 'bartag_func');
+ * </code>
  *
  * Example with enclosed content:
  *
- *     // [baztag]content[/baztag]
- *     function baztag_func( $atts, $content = '' ) {
- *         return "content = $content";
- *     }
- *     add_shortcode( 'baztag', 'baztag_func' );
+ * <code>
+ * // [baztag]content[/baztag]
+ * function baztag_func($atts, $content='') {
+ * 	return "content = $content";
+ * }
+ * add_shortcode('baztag', 'baztag_func');
+ * </code>
  *
  * @since 2.5.0
  *
@@ -159,11 +165,8 @@ function has_shortcode( $content, $tag ) {
 			return false;
 
 		foreach ( $matches as $shortcode ) {
-			if ( $tag === $shortcode[2] ) {
+			if ( $tag === $shortcode[2] )
 				return true;
-			} elseif ( ! empty( $shortcode[5] ) && has_shortcode( $shortcode[5], $tag ) ) {
-				return true;
-			}
 		}
 	}
 	return false;
@@ -179,6 +182,7 @@ function has_shortcode( $content, $tag ) {
  * @since 2.5.0
  *
  * @uses $shortcode_tags
+ * @uses get_shortcode_regex() Gets the search pattern for searching shortcodes.
  *
  * @param string $content Content to search for shortcodes
  * @return string Content with shortcodes filtered out.

@@ -75,8 +75,8 @@ class WP_Customize_Setting {
 	 * @param array                $args    Setting arguments.
 	 * @return WP_Customize_Setting $setting
 	 */
-	public function __construct( $manager, $id, $args = array() ) {
-		$keys = array_keys( get_object_vars( $this ) );
+	function __construct( $manager, $id, $args = array() ) {
+		$keys = array_keys( get_class_vars( __CLASS__ ) );
 		foreach ( $keys as $key ) {
 			if ( isset( $args[ $key ] ) )
 				$this->$key = $args[ $key ];
@@ -103,18 +103,12 @@ class WP_Customize_Setting {
 		return $this;
 	}
 
-	protected $_original_value;
-
 	/**
 	 * Handle previewing the setting.
 	 *
 	 * @since 3.4.0
 	 */
 	public function preview() {
-		if ( ! isset( $this->_original_value ) ) {
-			$this->_original_value = $this->value();
-		}
-
 		switch( $this->type ) {
 			case 'theme_mod' :
 				add_filter( 'theme_mod_' . $this->id_data[ 'base' ], array( $this, '_preview_filter' ) );
@@ -130,28 +124,14 @@ class WP_Customize_Setting {
 			default :
 
 				/**
-				 * Fires when the {@see WP_Customize_Setting::preview()} method is called for settings
+				 * Fires when the WP_Customize_Setting::preview() method is called for settings
 				 * not handled as theme_mods or options.
 				 *
-				 * The dynamic portion of the hook name, `$this->id`, refers to the setting ID.
+				 * The dynamic portion of the hook name, $this->id, refers to the setting ID.
 				 *
 				 * @since 3.4.0
-				 *
-				 * @param WP_Customize_Setting $this {@see WP_Customize_Setting} instance.
 				 */
-				do_action( "customize_preview_{$this->id}", $this );
-
-				/**
-				 * Fires when the {@see WP_Customize_Setting::preview()} method is called for settings
-				 * not handled as theme_mods or options.
-				 *
-				 * The dynamic portion of the hook name, `$this->type`, refers to the setting type.
-				 *
-				 * @since 4.1.0
-				 *
-				 * @param WP_Customize_Setting $this {@see WP_Customize_Setting} instance.
-				 */
-				do_action( "customize_preview_{$this->type}", $this );
+				do_action( 'customize_preview_' . $this->id );
 		}
 	}
 
@@ -165,15 +145,7 @@ class WP_Customize_Setting {
 	 * @return mixed New or old value.
 	 */
 	public function _preview_filter( $original ) {
-		$undefined = new stdClass(); // symbol hack
-		$post_value = $this->manager->post_value( $this, $undefined );
-		if ( $undefined === $post_value ) {
-			$value = $this->_original_value;
-		} else {
-			$value = $post_value;
-		}
-
-		return $this->multidimensional_replace( $original, $this->id_data['keys'], $value );
+		return $this->multidimensional_replace( $original, $this->id_data[ 'keys' ], $this->post_value() );
 	}
 
 	/**
@@ -182,7 +154,7 @@ class WP_Customize_Setting {
 	 *
 	 * @since 3.4.0
 	 *
-	 * @return false|null False if cap check fails or value isn't set.
+	 * @return bool False if cap check fails or value isn't set.
 	 */
 	public final function save() {
 		$value = $this->post_value();
@@ -191,16 +163,15 @@ class WP_Customize_Setting {
 			return false;
 
 		/**
-		 * Fires when the WP_Customize_Setting::save() method is called.
+		 * Fires when the WP_Customize_Setting::save() method is called for settings
+		 * not handled as theme_mods or options.
 		 *
-		 * The dynamic portion of the hook name, `$this->id_data['base']` refers to
+		 * The dynamic portion of the hook name, $this->id_data['base'] refers to
 		 * the base slug of the setting name.
 		 *
 		 * @since 3.4.0
-		 *
-		 * @param WP_Customize_Setting $this {@see WP_Customize_Setting} instance.
 		 */
-		do_action( 'customize_save_' . $this->id_data[ 'base' ], $this );
+		do_action( 'customize_save_' . $this->id_data[ 'base' ] );
 
 		$this->update( $value );
 	}
@@ -261,24 +232,23 @@ class WP_Customize_Setting {
 		switch( $this->type ) {
 			case 'theme_mod' :
 				return $this->_update_theme_mod( $value );
-
+				break;
 			case 'option' :
 				return $this->_update_option( $value );
-
+				break;
 			default :
 
 				/**
-				 * Fires when the {@see WP_Customize_Setting::update()} method is called for settings
+				 * Fires when the WP_Customize_Setting::update() method is called for settings
 				 * not handled as theme_mods or options.
 				 *
-				 * The dynamic portion of the hook name, `$this->type`, refers to the type of setting.
+				 * The dynamic portion of the hook name, $this->type, refers to the type of setting.
 				 *
 				 * @since 3.4.0
 				 *
-				 * @param mixed                $value Value of the setting.
-				 * @param WP_Customize_Setting $this  WP_Customize_Setting instance.
+				 * @param mixed $value Value of the setting.
 				 */
-				return do_action( 'customize_update_' . $this->type, $value, $this );
+				return do_action( 'customize_update_' . $this->type, $value );
 		}
 	}
 
@@ -308,7 +278,7 @@ class WP_Customize_Setting {
 	 * @since 3.4.0
 	 *
 	 * @param mixed $value The value to update.
-	 * @return bool|null The result of saving the value.
+	 * @return mixed The result of saving the value.
 	 */
 	protected function _update_option( $value ) {
 		// Handle non-array option.
@@ -343,7 +313,7 @@ class WP_Customize_Setting {
 				/**
 				 * Filter a Customize setting value not handled as a theme_mod or option.
 				 *
-				 * The dynamic portion of the hook name, `$this->id_date['base']`, refers to
+				 * The dynamic portion of the hook name, $this->id_date['base'], refers to
 				 * the base slug of the setting name.
 				 *
 				 * For settings handled as theme_mods or options, see those corresponding
@@ -377,12 +347,12 @@ class WP_Customize_Setting {
 		/**
 		 * Filter a Customize setting value for use in JavaScript.
 		 *
-		 * The dynamic portion of the hook name, `$this->id`, refers to the setting ID.
+		 * The dynamic portion of the hook name, $this->id, refers to the setting ID.
 		 *
 		 * @since 3.4.0
 		 *
 		 * @param mixed                $value The setting value.
-		 * @param WP_Customize_Setting $this  {@see WP_Customize_Setting} instance.
+		 * @param WP_Customize_Setting $this  WP_Customize_Setting instance.
 		 */
 		$value = apply_filters( "customize_sanitize_js_{$this->id}", $this->value(), $this );
 
@@ -439,15 +409,8 @@ class WP_Customize_Setting {
 			$node = &$node[ $key ];
 		}
 
-		if ( $create ) {
-			if ( ! is_array( $node ) ) {
-				// account for an array overriding a string or object value
-				$node = array();
-			}
-			if ( ! isset( $node[ $last ] ) ) {
-				$node[ $last ] = array();
-			}
-		}
+		if ( $create && ! isset( $node[ $last ] ) )
+			$node[ $last ] = array();
 
 		if ( ! isset( $node[ $last ] ) )
 			return;
@@ -490,7 +453,7 @@ class WP_Customize_Setting {
 	 *
 	 * @param $root
 	 * @param $keys
-	 * @param mixed $default A default value which is used as a fallback. Default is null.
+	 * @param $default A default value which is used as a fallback. Default is null.
 	 * @return mixed The requested value or the default value.
 	 */
 	final protected function multidimensional_get( $root, $keys, $default = null ) {
@@ -577,6 +540,7 @@ final class WP_Customize_Background_Image_Setting extends WP_Customize_Setting {
 
 	/**
 	 * @since 3.4.0
+	 * @uses remove_theme_mod()
 	 *
 	 * @param $value
 	 */

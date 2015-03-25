@@ -17,13 +17,19 @@ ul.wpseo-metabox-tabs {
 }
 
 ul.wpseo-metabox-tabs li.active {
-	border-width: 1px 1px 0;
 	border-style: solid solid none;
-	background-color: #fdfdfd;
+	border-width: 1px 1px 0;
 }
 
 ul.wpseo-metabox-tabs li {
 	padding: 5px;
+	-moz-border-radius: 3px 3px 0 0;
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-khtml-border-top-left-radius: 3px;
+	-khtml-border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 .wpseo-metabox-tabs a {
@@ -33,32 +39,28 @@ ul.wpseo-metabox-tabs li {
 .wpseo-metabox-tabs-div div.wpseo-tabs-panel {
 	overflow: auto;
 	padding: 0.5em 0.9em;
-	border: 1px solid;
+	border-style: solid;
+	border-width: 1px;
 }
 
 .wpseo-heading {
 	padding-left: 10px;
 }
 
-.wpseotab {
-	display: none;
-}
-
-.wpseotab.active {
-	display: block;
+.wpseo-tab-content {
 	overflow: auto;
 	padding: 0.5em 0.9em;
-	border: 1px solid #ddd;
-	background-color: #fdfdfd;
+	border-style: solid;
+	border-width: 1px;
 }
 
-#wpseo_meta .postbox .inside .wpseotab {
+#wpseo_meta .postbox .inside .wpseo-tab-content {
 	font-size: 13px !important;
 }
 
-.inside .wpseotab .form-table th {
-	width: 140px !important;
+.inside .wpseo-tab-content .form-table th {
 	font-size: 13px;
+	width: 140px !important;
 }
 
 .good, .warn, .wrong {
@@ -78,27 +80,18 @@ ul.wpseo-metabox-tabs li {
 }
 
 #current_seo_title span {
-	padding: 2px 5px;
 	background-color: lightyellow;
+	padding: 2px 5px;
 }
 
 #wpseosnippet {
-	width: auto;
-	max-width: 520px;
-	margin: 0 0 10px;
+	margin: 0 0 10px 0;
 	padding: 0 5px;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Arial, sans-serif;
+	line-height: 15px !important;
+	font-size: 13px !important;
 	font-style: normal;
-}
-
-#wpseosnippet td {
-	margin: 0;
-	padding: 0;
-}
-
-#wpseosnippet cite.url {
-	font-weight: normal;
-	font-style: normal;
+	width: 540px !important;
 }
 
 #wpseosnippet a {
@@ -106,41 +99,18 @@ ul.wpseo-metabox-tabs li {
 }
 
 #wpseosnippet .title {
-	display: block;
-	overflow: hidden;
-	width: 512px;
-	color: #1e0fbe;
-	font-size: 18px !important;
-	line-height: 1.2;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	color: #11c;
+	font-size: 16px !important;
+	line-height: 19px;
+	text-decoration: underline;
 }
 
 #wpseosnippet .desc {
-	font-size: small;
-	line-height: 1.4;
-	word-wrap: break-word;
-}
-
-#wpseosnippet .desc .autogen {
-	color: #777;
-}
-
-#wpseosnippet .date {
-	color: #808080;
-}
-
-#wpseosnippet .desc p {
-	color: #545454;
-	font-size: small;
-	line-height: 1.4;
-	word-wrap: break-word;
+	color: #000;
 }
 
 #wpseosnippet .url {
-	color: #006621;
-	font-size: 13px;
-	line-height: 16px;
+	color: #282;
 }
 
 #wpseosnippet .meta {
@@ -148,7 +118,7 @@ ul.wpseo-metabox-tabs li {
 }
 
 #wpseosnippet .util {
-	color: #4272db;
+	color: #4272DB;
 }
 
 #wpseosnippet p {
@@ -159,17 +129,19 @@ ul.wpseo-metabox-tabs li {
 	text-decoration: underline;
 }
 
-#focuskwresults ul {
-	margin: 0;
+#wpseosnippet {
+	margin-bottom: 10px;
 }
 
-#focuskwresults p, #focuskwresults li {
-	font-size: 13px;
-}
-
-#focuskwresults li {
-	margin: 0 0 0 20px;
-	list-style-type: disc;
+.wpseo_yahoo_kw {
+	display: block;
+	float: left;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #ddd;
+	margin: 3px 8px 3px 0;
+	padding: 3px;
 }
 
 .wpseo_hidden {
@@ -179,9 +151,9 @@ ul.wpseo-metabox-tabs li {
 /* Linkdex analysis block */
 
 table.wpseoanalysis th {
-	padding: 15px 0 5px 0;
-	font-size: 14px;
 	text-align: left;
+	font-weight: 14px;
+	padding: 15px 0 5px 0;
 }
 
 table.wpseoanalysis th.first {
@@ -189,22 +161,22 @@ table.wpseoanalysis th.first {
 }
 
 table.wpseoanalysis td {
-	margin: 5px 0;
-	font-size: 13px;
+	font-weight: 13px;
 	line-height: 16px;
+	margin: 5px 0;
 }
 
 table.wpseoanalysis td.score {
-	width: 20px;
-	height: 18px;
+	width: 40px;
+	height: 30px;
 	padding-left: 10px;
 }
 
 .wpseo_msg {
+	border: 1px solid #E6DB55;
+	background-color: lightYellow;
 	margin: 5px 0 10px 0;
 	padding: 0 5px;
-	border: 1px solid #e6db55;
-	background-color: lightYellow;
 }
 
 /*
@@ -219,13 +191,13 @@ table.wpseoanalysis td.score {
 
 /* Component containers
 ----------------------------------*/
-#wpseotab .ui-widget-content {
-	border: 1px solid #ddd;
-	color: #333;
+.ui-widget-content {
+	border: 1px solid #dddddd;
 	background: #f1f1f1;
+	color: #333;
 }
 
-#wpseotab .ui-widget-content a {
+.ui-widget-content a {
 	color: #333;
 }
 
@@ -233,13 +205,13 @@ table.wpseoanalysis td.score {
  * jQuery UI Autocomplete 1.8.12
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
-#wpseotab .ui-autocomplete {
+.ui-autocomplete {
 	position: absolute;
 	cursor: default;
 }
 
 /* workarounds */
-* html #wpseotab .ui-autocomplete {
+* html .ui-autocomplete {
 	width: 1px;
 }
 
@@ -251,11 +223,11 @@ table.wpseoanalysis td.score {
  * http://docs.jquery.com/UI/Menu#theming
  */
 .ui-menu {
+	list-style: none;
+	padding: 2px;
+	margin: 0;
 	display: block;
 	float: left;
-	margin: 0;
-	padding: 2px;
-	list-style: none;
 }
 
 .ui-menu .ui-menu {
@@ -263,71 +235,24 @@ table.wpseoanalysis td.score {
 }
 
 .ui-menu .ui-menu-item {
-	float: left;
-	clear: left;
-	zoom: 1;
-	width: 100%;
 	margin: 0;
 	padding: 0;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
 }
 
 .ui-menu .ui-menu-item a {
-	display: block;
-	zoom: 1;
-	padding: 0.2em 0.4em;
-	line-height: 1.5;
 	text-decoration: none;
+	display: block;
+	padding: .2em .4em;
+	line-height: 1.5;
+	zoom: 1;
 }
 
 .ui-menu .ui-menu-item a.ui-state-hover,
 .ui-menu .ui-menu-item a.ui-state-active {
-	margin: -1px;
 	color: #000;
-}
-
-.wpseo-score-icon {
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	margin: 3px 10px 0 3px;
-	border-radius: 50%;
-	background: #888;
-	vertical-align: top;
-}
-
-.wpseo-score-icon.good {
-	background-color: #7ad03a;
-}
-
-.wpseo-score-icon.ok {
-	background-color: #ffba00;
-}
-
-.wpseo-score-icon.poor {
-	background-color: #ee7c1b;
-}
-
-.wpseo-score-icon.bad {
-	background-color: #dd3d36;
-}
-
-.wpseo-score-icon.na {
-	background-color: #888;
-}
-
-.wpseo-score-icon.noindex {
-	background-color: #1e8cbe;
-}
-
-.wpseo-score-title {
-	font-weight: 600;
-}
-
-img.yoast_help {
-	cursor: pointer;
-}
-
-.yoast-qtip {
-	font-size: 14px !important;
-	line-height: 18px !important;
+	margin: -1px;
 }

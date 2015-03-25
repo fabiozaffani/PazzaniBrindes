@@ -1,6 +1,6 @@
 /* global deleteUserSetting, setUserSetting, switchEditors, tinymce, tinyMCEPreInit */
 /**
- * Distraction-Free Writing
+ * Distraction Free Writing
  * (wp-fullscreen)
  *
  * Access the API globally using the window.wp.editor.fullscreen variable.
@@ -510,9 +510,8 @@
 				}
 			});
 
-			$( window ).on( 'keydown.wp-fullscreen', function( event ) {
-				// Turn fullscreen off when Esc is pressed.
-				if ( 27 === event.keyCode && s.visible ) {
+			$document.on( 'keydown.wp-fullscreen', function( event ) {
+				if ( 27 === event.which && s.visible ) { // Esc
 					api.off();
 					event.stopImmediatePropagation();
 				}

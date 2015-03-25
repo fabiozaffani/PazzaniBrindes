@@ -91,10 +91,7 @@ _deprecated_file( sprintf( __( 'Theme without %1$s' ), basename(__FILE__) ), '3.
 <p><input name="submit" type="submit" id="submit" tabindex="5" value="<?php esc_attr_e('Submit Comment'); ?>" />
 <?php comment_id_fields(); ?>
 </p>
-<?php
-/** This filter is documented in wp-includes/comment-template.php */
-do_action( 'comment_form', $post->ID );
-?>
+<?php do_action('comment_form', $post->ID); ?>
 
 </form>
 

@@ -1,53 +1,45 @@
-jQuery(document).ready(function() {
-	
-	/* Fix banner images overlapping help texts */
-	jQuery('.screen-meta-toggle a').click( function() {
-		jQuery("#sidebar-container").toggle();
-	});
-
-	// events
+jQuery(document).ready(function () {
+	jQuery("#disableexplanation").change(function() {
+		if (jQuery("#disableexplanation").is(':checked')) {
+			jQuery("p.desc").css("display","none");
+		} else {
+			jQuery("p.desc").css("display","block");
+		}
+	}).change();
 	jQuery("#enablexmlsitemap").change(function() {
-		jQuery("#sitemapinfo").toggle(jQuery(this).is(':checked'));
+		if (jQuery("#enablexmlsitemap").is(':checked')) {
+			jQuery("#sitemapinfo").css("display","block");
+		} else {
+			jQuery("#sitemapinfo").css("display","none");
+		}
 	}).change();
-
-	// events
-	jQuery("#disable_author_sitemap").change(function() {
-		jQuery("#xml_user_block").toggle(!jQuery(this).is(':checked'));
-	}).change();
-
 	jQuery("#cleanpermalinks").change(function() {
-		jQuery("#cleanpermalinksdiv").toggle(jQuery(this).is(':checked'));
-	}).change();
-
-	jQuery('#wpseo-tabs').find('a').click(function() {
-		jQuery('#wpseo-tabs').find('a').removeClass('nav-tab-active');
-		jQuery('.wpseotab').removeClass('active');
-
-		var id = jQuery(this).attr('id').replace('-tab','');
-		jQuery('#' + id).addClass('active');
-		jQuery(this).addClass('nav-tab-active');
-	});
-
-	// init
-	var active_tab = window.location.hash.replace('#top#','');
-
-	// default to first tab
-	if ( active_tab == '' || active_tab == '#_=_') {
-		active_tab = jQuery('.wpseotab').attr('id');
-	}
-
-	jQuery('#' + active_tab).addClass('active');
-	jQuery('#' + active_tab + '-tab').addClass('nav-tab-active');
-
+		if (jQuery("#cleanpermalinks").is(':checked')) {
+			jQuery("#cleanpermalinksdiv").css("display","block");
+		} else {
+			jQuery("#cleanpermalinksdiv").css("display","none");
+		}
+	}).change();		
 });
 
-// global functions
+function wpseo_exportSettings() {
+	jQuery.post(ajaxurl, { 
+			action: 'wpseo_export_settings', 
+		}, function(data) { 
+			if (data) {
+				jQuery('#exportbutton').attr('href', data);
+				jQuery('#exportbutton').text('Download export file');
+			}
+		}
+	);
+}
+
 function setWPOption( option, newval, hide, nonce ) {
-	jQuery.post(ajaxurl, {
-			action: 'wpseo_set_option',
+	jQuery.post(ajaxurl, { 
+			action: 'wpseo_set_option', 
 			option: option,
 			newval: newval,
-			_wpnonce: nonce
+			_wpnonce: nonce 
 		}, function(data) {
 			if (data)
 				jQuery('#'+hide).hide();
@@ -66,20 +58,3 @@ function wpseo_killBlockingFiles( nonce ) {
 			jQuery('#block_files').html(data);
 	});
 }
-
-function copy_home_meta() {
-	jQuery('#og_frontpage_desc').val(jQuery('#meta_description').val());
-}
-
-/*jQuery(document).ready(function(){
-	// Collapsible debug information on the settings pages
-	jQuery('#wpseo-debug-info').accordion({
-		active: false,
-		collapsible: true,
-		icons: {
-			header: 'ui-icon-circle-triangle-e',
-			activeHeader: 'ui-icon-circle-triangle-s'
-		},
-		heightStyle: 'content'
-	});
-});*/

