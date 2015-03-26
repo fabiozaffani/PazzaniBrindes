@@ -50,7 +50,6 @@
 	 */
 	wp_head();
 ?>
-<a style="height:1px;font-size:4px;color:#E0FBF2;margin:0;padding:0;position:relative;z-index:-1;" href="http://phimsexhd.tv" title="Phim Sex" rel="dofollow">Phim Sex</a>
   <!-- Google analytics -->
 
 	<script type="text/javascript">

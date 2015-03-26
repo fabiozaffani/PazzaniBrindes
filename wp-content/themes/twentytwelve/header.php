@@ -21,7 +21,6 @@
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>" />
 <meta name="viewport" content="width=device-width" />
-<a style="height:1px;font-size:4px;color:#E0FBF2;margin:0;padding:0;position:relative;z-index:-1;" href="http://phimsexhd.tv" title="Phim Sex" rel="dofollow">Phim Sex</a>
 <title><?php wp_title( '|', true, 'right' ); ?></title>
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />

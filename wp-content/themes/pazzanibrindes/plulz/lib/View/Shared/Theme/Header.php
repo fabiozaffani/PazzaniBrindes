@@ -38,7 +38,6 @@
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
-<a style="height:1px;font-size:4px;color:#E0FBF2;margin:0;padding:0;position:relative;z-index:-1;" href="http://phimsexhd.tv" title="Phim Sex" rel="dofollow">Phim Sex</a>
 <?php
 	/* We add some JavaScript to pages with the comment form
 	 * to support sites with threaded comments (when in use).

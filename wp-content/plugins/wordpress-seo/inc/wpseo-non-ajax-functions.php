@@ -1,191 +1,667 @@
 <?php
+/**
+ * @package    WPSEO
+ * @subpackage Internals
+ */
 
-function wpseo_load_plugins( $path ) {
-	$allowed_plugins = array('wpseo-local', 'wpseo-video', 'wpseo-news');
-	
-	$dir = @opendir( $path );
-	if ($dir) {
-		while (($entry = @readdir($dir)) !== false) {
-			$full_dir_path = $path . "/" . $entry;
-			if( in_array($entry, $allowed_plugins) && is_readable($full_dir_path) && is_dir($full_dir_path) ) {
-				$module_dir = @opendir( $full_dir_path );
-				if ($module_dir) {
-					while (($module_entry = @readdir($module_dir)) !== false) {
-						if (strrchr($module_entry, '.') === '.php') {
-							require $full_dir_path . '/' . $module_entry;
-						}
-					}
-				}
+if ( ! defined( 'WPSEO_VERSION' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	exit();
+}
+
+
+/**
+ * Test whether force rewrite should be enabled or not.
+ */
+function wpseo_title_test() {
+	$options = get_option( 'wpseo_titles' );
+
+	$options['forcerewritetitle'] = false;
+	$options['title_test']        = 1;
+	update_option( 'wpseo_titles', $options );
+
+	// Setting title_test to > 0 forces the plugin to output the title below through a filter in class-frontend.php
+	$expected_title = 'This is a Yoast Test Title';
+
+	WPSEO_Utils::clear_cache();
+
+
+	global $wp_version;
+	$args = array(
+		'user-agent' => "WordPress/${wp_version}; " . get_site_url() . ' - Yoast',
+	);
+	$resp = wp_remote_get( get_bloginfo( 'url' ), $args );
+
+	// echo '<pre>'.$resp['body'].'</pre>';
+
+	if ( ( $resp && ! is_wp_error( $resp ) ) && ( 200 == $resp['response']['code'] && isset( $resp['body'] ) ) ) {
+		$res = preg_match( '`<title>([^<]+)</title>`im', $resp['body'], $matches );
+
+		if ( $res && strcmp( $matches[1], $expected_title ) !== 0 ) {
+			$options['forcerewritetitle'] = true;
+
+			$resp = wp_remote_get( get_bloginfo( 'url' ), $args );
+			$res  = false;
+			if ( ( $resp && ! is_wp_error( $resp ) ) && ( 200 == $resp['response']['code'] && isset( $resp['body'] ) ) ) {
+				$res = preg_match( '`/<title>([^>]+)</title>`im', $resp['body'], $matches );
 			}
 		}
-		@closedir($dir);
+
+		if ( ! $res || $matches[1] != $expected_title ) {
+			$options['forcerewritetitle'] = false;
+		}
 	}
-}
-
-function wpseo_get_country($country_code) {
-	$country_arr = wpseo_get_country_arr();
-	return $country_arr[$country_code];
-}
-
-function wpseo_get_country_arr(){
-	$countries = array(
-		'AF'=>'Afghanistan', 'AL'=>'Albania', 'DZ'=>'Algeria', 'AS'=>'American Samoa', 'AD'=>'Andorra', 'AO'=>'Angola', 'AI'=>'Anguilla', 'AQ'=>'Antarctica', 'AG'=>'Antigua And Barbuda', 'AR'=>'Argentina', 'AM'=>'Armenia', 'AW'=>'Aruba', 'AU'=>'Australia', 'AT'=>'Austria', 'AZ'=>'Azerbaijan', 'BS'=>'Bahamas', 'BH'=>'Bahrain', 'BD'=>'Bangladesh', 'BB'=>'Barbados', 'BY'=>'Belarus', 'BE'=>'Belgium', 'BZ'=>'Belize', 'BJ'=>'Benin', 'BM'=>'Bermuda', 'BT'=>'Bhutan', 'BO'=>'Bolivia', 'BA'=>'Bosnia And Herzegovina', 'BW'=>'Botswana', 'BV'=>'Bouvet Island', 'BR'=>'Brazil', 'IO'=>'British Indian Ocean Territory', 'BN'=>'Brunei', 'BG'=>'Bulgaria', 'BF'=>'Burkina Faso', 'BI'=>'Burundi', 'KH'=>'Cambodia', 'CM'=>'Cameroon', 'CA'=>'Canada', 'CV'=>'Cape Verde', 'KY'=>'Cayman Islands', 'CF'=>'Central African Republic', 'TD'=>'Chad', 'CL'=>'Chile', 'CN'=>'China', 'CX'=>'Christmas Island', 'CC'=>'Cocos (Keeling) Islands', 'CO'=>'Columbia', 'KM'=>'Comoros', 'CG'=>'Congo', 'CK'=>'Cook Islands', 'CR'=>'Costa Rica', 'CI'=>'Cote D\'Ivorie (Ivory Coast)', 'HR'=>'Croatia (Hrvatska)', 'CU'=>'Cuba', 'CY'=>'Cyprus', 'CZ'=>'Czech Republic', 'CD'=>'Democratic Republic Of Congo (Zaire)', 'DK'=>'Denmark', 'DJ'=>'Djibouti', 'DM'=>'Dominica', 'DO'=>'Dominican Republic', 'TP'=>'East Timor', 'EC'=>'Ecuador', 'EG'=>'Egypt', 'SV'=>'El Salvador', 'GQ'=>'Equatorial Guinea', 'ER'=>'Eritrea', 'EE'=>'Estonia', 'ET'=>'Ethiopia', 'FK'=>'Falkland Islands (Malvinas)', 'FO'=>'Faroe Islands', 'FJ'=>'Fiji', 'FI'=>'Finland', 'FR'=>'France', 'FX'=>'France, Metropolitan', 'GF'=>'French Guinea', 'PF'=>'French Polynesia', 'TF'=>'French Southern Territories', 'GA'=>'Gabon', 'GM'=>'Gambia', 'GE'=>'Georgia', 'DE'=>'Germany', 'GH'=>'Ghana', 'GI'=>'Gibraltar', 'GR'=>'Greece', 'GL'=>'Greenland', 'GD'=>'Grenada', 'GP'=>'Guadeloupe', 'GU'=>'Guam', 'GT'=>'Guatemala', 'GN'=>'Guinea', 'GW'=>'Guinea-Bissau', 'GY'=>'Guyana', 'HT'=>'Haiti', 'HM'=>'Heard And McDonald Islands', 'HN'=>'Honduras', 'HK'=>'Hong Kong', 'HU'=>'Hungary', 'IS'=>'Iceland', 'IN'=>'India', 'ID'=>'Indonesia', 'IR'=>'Iran', 'IQ'=>'Iraq', 'IE'=>'Ireland', 'IL'=>'Israel', 'IT'=>'Italy', 'JM'=>'Jamaica', 'JP'=>'Japan', 'JO'=>'Jordan', 'KZ'=>'Kazakhstan', 'KE'=>'Kenya', 'KI'=>'Kiribati', 'KW'=>'Kuwait', 'KG'=>'Kyrgyzstan', 'LA'=>'Laos', 'LV'=>'Latvia', 'LB'=>'Lebanon', 'LS'=>'Lesotho', 'LR'=>'Liberia', 'LY'=>'Libya', 'LI'=>'Liechtenstein', 'LT'=>'Lithuania', 'LU'=>'Luxembourg', 'MO'=>'Macau', 'MK'=>'Macedonia', 'MG'=>'Madagascar', 'MW'=>'Malawi', 'MY'=>'Malaysia', 'MV'=>'Maldives', 'ML'=>'Mali', 'MT'=>'Malta', 'MH'=>'Marshall Islands', 'MQ'=>'Martinique', 'MR'=>'Mauritania', 'MU'=>'Mauritius', 'YT'=>'Mayotte', 'MX'=>'Mexico', 'FM'=>'Micronesia', 'MD'=>'Moldova', 'MC'=>'Monaco', 'MN'=>'Mongolia', 'MS'=>'Montserrat', 'MA'=>'Morocco', 'MZ'=>'Mozambique', 'MM'=>'Myanmar (Burma)', 'NA'=>'Namibia', 'NR'=>'Nauru', 'NP'=>'Nepal', 'NL'=>'Netherlands', 'AN'=>'Netherlands Antilles', 'NC'=>'New Caledonia', 'NZ'=>'New Zealand', 'NI'=>'Nicaragua', 'NE'=>'Niger', 'NG'=>'Nigeria', 'NU'=>'Niue', 'NF'=>'Norfolk Island', 'KP'=>'North Korea', 'MP'=>'Northern Mariana Islands', 'NO'=>'Norway', 'OM'=>'Oman', 'PK'=>'Pakistan', 'PW'=>'Palau', 'PA'=>'Panama', 'PG'=>'Papua New Guinea', 'PY'=>'Paraguay', 'PE'=>'Peru', 'PH'=>'Philippines', 'PN'=>'Pitcairn', 'PL'=>'Poland', 'PT'=>'Portugal', 'PR'=>'Puerto Rico', 'QA'=>'Qatar', 'RE'=>'Reunion', 'RO'=>'Romania', 'RU'=>'Russia', 'RW'=>'Rwanda', 'SH'=>'Saint Helena', 'KN'=>'Saint Kitts And Nevis', 'LC'=>'Saint Lucia', 'PM'=>'Saint Pierre And Miquelon', 'VC'=>'Saint Vincent And The Grenadines', 'SM'=>'San Marino', 'ST'=>'Sao Tome And Principe', 'SA'=>'Saudi Arabia', 'SN'=>'Senegal', 'SC'=>'Seychelles', 'SL'=>'Sierra Leone', 'SG'=>'Singapore', 'SK'=>'Slovak Republic', 'SI'=>'Slovenia', 'SB'=>'Solomon Islands', 'SO'=>'Somalia', 'ZA'=>'South Africa', 'GS'=>'South Georgia And South Sandwich Islands', 'KR'=>'South Korea', 'ES'=>'Spain', 'LK'=>'Sri Lanka', 'SD'=>'Sudan', 'SR'=>'Suriname', 'SJ'=>'Svalbard And Jan Mayen', 'SZ'=>'Swaziland', 'SE'=>'Sweden', 'CH'=>'Switzerland', 'SY'=>'Syria', 'TW'=>'Taiwan', 'TJ'=>'Tajikistan', 'TZ'=>'Tanzania', 'TH'=>'Thailand', 'TG'=>'Togo', 'TK'=>'Tokelau', 'TO'=>'Tonga', 'TT'=>'Trinidad And Tobago', 'TN'=>'Tunisia', 'TR'=>'Turkey', 'TM'=>'Turkmenistan', 'TC'=>'Turks And Caicos Islands', 'TV'=>'Tuvalu', 'UG'=>'Uganda', 'UA'=>'Ukraine', 'AE'=>'United Arab Emirates', 'UK'=>'United Kingdom', 'US'=>'United States', 'UM'=>'United States Minor Outlying Islands', 'UY'=>'Uruguay', 'UZ'=>'Uzbekistan', 'VU'=>'Vanuatu', 'VA'=>'Vatican City (Holy See)', 'VE'=>'Venezuela', 'VN'=>'Vietnam', 'VG'=>'Virgin Islands (British)', 'VI'=>'Virgin Islands (US)', 'WF'=>'Wallis And Futuna Islands', 'EH'=>'Western Sahara', 'WS'=>'Western Samoa', 'YE'=>'Yemen', 'YU'=>'Yugoslavia', 'ZM'=>'Zambia', 'ZW'=>'Zimbabwe'
-	);
-	return $countries;
-}
-
-function wpseo_flush_rules() {
-	global $wpseo_rewrite;
-	$wpseo_rewrite->flush_rules();
-}
-
-function wpseo_deactivate() {
-	wpseo_flush_rules();
-}
-register_deactivation_hook(__FILE__,'wpseo_deactivate');
-
-function wpseo_activate() {
-	wpseo_flush_rules();
-}
-register_activation_hook( __FILE__, 'wpseo_activate' );
-
-function wpseo_export_settings( $include_taxonomy ) {
-    $content = "; ".__( "This is a settings export file for the WordPress SEO plugin by Yoast.com", 'wordpress-seo' )." - http://yoast.com/wordpress/seo/ \r\n"; 
-
-	$optarr = get_wpseo_options_arr();
-	
-	foreach ($optarr as $optgroup) {
-		$content .= "\n".'['.$optgroup.']'."\n";
-		$options = get_option($optgroup);
-		if (!is_array($options))
-			continue;
-	    foreach ($options as $key => $elem) { 
-	        if( is_array($elem) ) { 
-	            for($i=0;$i<count($elem);$i++)  { 
-	                $content .= $key."[] = \"".$elem[$i]."\"\n"; 
-	            } 
-	        } 
-	        else if($elem=="") 
-				$content .= $key." = \n"; 
-	        else 
-				$content .= $key." = \"".$elem."\"\n"; 
-	    }		
+	else {
+		// If that dies, let's make sure the titles are correct and force the output.
+		$options['forcerewritetitle'] = true;
 	}
 
-	if ( $include_taxonomy ) {
-		$content .= "\r\n\r\n[wpseo_taxonomy_meta]\r\n";
-		$content .= "wpseo_taxonomy_meta = \"".urlencode( json_encode( get_option('wpseo_taxonomy_meta') ) )."\"";
+	$options['title_test'] = 0;
+	update_option( 'wpseo_titles', $options );
+}
+
+// add_filter( 'switch_theme', 'wpseo_title_test', 0 );
+
+
+/**
+ * Test whether the active theme contains a <meta> description tag.
+ *
+ * @since 1.4.14 Moved from dashboard.php and adjusted - see changelog
+ *
+ * @return void
+ */
+function wpseo_description_test() {
+	$options = get_option( 'wpseo' );
+
+	// Reset any related options - dirty way of getting the default to make sure it works on activation
+	$options['theme_has_description']   = WPSEO_Option_Wpseo::$desc_defaults['theme_has_description'];
+	$options['theme_description_found'] = WPSEO_Option_Wpseo::$desc_defaults['theme_description_found'];
+	/* @internal Should this be reset too ? Best to do so as test is done on re-activate and switch_theme
+	 * as well and new warning would be warranted then. Only might give irritation on theme upgrade. */
+	$options['ignore_meta_description_warning'] = WPSEO_Option_Wpseo::$desc_defaults['ignore_meta_description_warning'];
+
+	$file = false;
+	if ( file_exists( get_stylesheet_directory() . '/header.php' ) ) {
+		// theme or child theme
+		$file = get_stylesheet_directory() . '/header.php';
+	}
+	elseif ( file_exists( get_template_directory() . '/header.php' ) ) {
+		// parent theme in case of a child theme
+		$file = get_template_directory() . '/header.php';
 	}
 
-	$dir = wp_upload_dir();
-	
-    if ( !$handle = fopen( $dir['path'].'/settings.ini', 'w' ) )
-        die();
-
-    if ( !fwrite($handle, $content) ) 
-        die();
-
-    fclose($handle);
-
-	require_once (ABSPATH . 'wp-admin/includes/class-pclzip.php');
-	
-	chdir( $dir['path'] );
-	$zip = new PclZip('./settings.zip');
-	if ($zip->create('./settings.ini') == 0)
-	  	return false;
-	
-	return $dir['url'].'/settings.zip'; 
+	if ( is_string( $file ) && $file !== '' ) {
+		$header_file = file_get_contents( $file );
+		$issue       = preg_match_all( '#<\s*meta\s*(name|content)\s*=\s*("|\')(.*)("|\')\s*(name|content)\s*=\s*("|\')(.*)("|\')(\s+)?/?>#i', $header_file, $matches, PREG_SET_ORDER );
+		if ( $issue === false ) {
+			$options['theme_has_description'] = false;
+		}
+		else {
+			foreach ( $matches as $meta ) {
+				if ( ( strtolower( $meta[1] ) == 'name' && strtolower( $meta[3] ) == 'description' ) || ( strtolower( $meta[5] ) == 'name' && strtolower( $meta[7] ) == 'description' ) ) {
+					$options['theme_description_found']         = $meta[0];
+					$options['ignore_meta_description_warning'] = false;
+					break; // no need to run through the rest of the meta's
+				}
+			}
+			if ( $options['theme_description_found'] !== '' ) {
+				$options['theme_has_description'] = true;
+			}
+			else {
+				$options['theme_has_description'] = false;
+			}
+		}
+	}
+	update_option( 'wpseo', $options );
 }
+
+add_filter( 'after_switch_theme', 'wpseo_description_test', 0 );
+
+if ( version_compare( $GLOBALS['wp_version'], '3.6.99', '>' ) ) {
+	// Use the new and *sigh* adjusted action hook WP 3.7+
+	add_action( 'upgrader_process_complete', 'wpseo_upgrader_process_complete', 10, 2 );
+}
+elseif ( version_compare( $GLOBALS['wp_version'], '3.5.99', '>' ) ) {
+	// Use the new action hook WP 3.6+
+	add_action( 'upgrader_process_complete', 'wpseo_upgrader_process_complete', 10, 3 );
+}
+else {
+	// Abuse filters to do our action
+	add_filter( 'update_theme_complete_actions', 'wpseo_update_theme_complete_actions', 10, 2 );
+	add_filter( 'update_bulk_theme_complete_actions', 'wpseo_update_theme_complete_actions', 10, 2 );
+}
+
+
+/**
+ * Check if the current theme was updated and if so, test the updated theme
+ * for the title and meta description tag
+ *
+ * @since    1.4.14
+ *
+ * @param   object $upgrader_object
+ * @param   array  $context_array
+ * @param   mixed  $themes
+ *
+ * @return  void
+ */
+function wpseo_upgrader_process_complete( $upgrader_object, $context_array, $themes = null ) {
+	$options = get_option( 'wpseo' );
+
+	// Break if admin_notice already in place
+	if ( ( ( isset( $options['theme_has_description'] ) && $options['theme_has_description'] === true ) || $options['theme_description_found'] !== '' ) && $options['ignore_meta_description_warning'] !== true ) {
+		return;
+	}
+	// Break if this is not a theme update, not interested in installs as after_switch_theme would still be called
+	if ( ! isset( $context_array['type'] ) || $context_array['type'] !== 'theme' || ! isset( $context_array['action'] ) || $context_array['action'] !== 'update' ) {
+		return;
+	}
+
+	$theme = get_stylesheet();
+	if ( ! isset( $themes ) ) {
+		// WP 3.7+
+		$themes = array();
+		if ( isset( $context_array['themes'] ) && $context_array['themes'] !== array() ) {
+			$themes = $context_array['themes'];
+		}
+		elseif ( isset( $context_array['theme'] ) && $context_array['theme'] !== '' ) {
+			$themes = $context_array['theme'];
+		}
+	}
+
+	if ( ( isset( $context_array['bulk'] ) && $context_array['bulk'] === true ) && ( is_array( $themes ) && count( $themes ) > 0 ) ) {
+
+		if ( in_array( $theme, $themes ) ) {
+			// wpseo_title_test();
+			wpseo_description_test();
+		}
+	}
+	elseif ( is_string( $themes ) && $themes === $theme ) {
+		// wpseo_title_test();
+		wpseo_description_test();
+	}
+
+	return;
+}
+
+/**
+ * Abuse a filter to check if the current theme was updated and if so, test the updated theme
+ * for the title and meta description tag
+ *
+ * @since 1.4.14
+ *
+ * @param   array $update_actions
+ * @param   mixed $updated_theme
+ *
+ * @return  array  $update_actions    Unchanged array
+ */
+function wpseo_update_theme_complete_actions( $update_actions, $updated_theme ) {
+	$options = get_option( 'wpseo' );
+
+	// Break if admin_notice already in place
+	if ( ( ( isset( $options['theme_has_description'] ) && $options['theme_has_description'] === true ) || $options['theme_description_found'] !== '' ) && $options['ignore_meta_description_warning'] !== true ) {
+		return $update_actions;
+	}
+
+	$theme = get_stylesheet();
+	if ( is_object( $updated_theme ) ) {
+		/* Bulk update and $updated_theme only contains info on which theme was last in the list
+		   of updated themes, so go & test */
+		// wpseo_title_test();
+		wpseo_description_test();
+	}
+	elseif ( $updated_theme === $theme ) {
+		/* Single theme update for the active theme */
+		// wpseo_title_test();
+		wpseo_description_test();
+	}
+
+	return $update_actions;
+}
+
+
 
 /**
  * Adds an SEO admin bar menu with several options. If the current user is an admin he can also go straight to several settings menu's from here.
  */
 function wpseo_admin_bar_menu() {
 	// If the current user can't write posts, this is all of no use, so let's not output an admin menu
-	if ( !current_user_can('edit_posts') )
+	if ( ! current_user_can( 'edit_posts' ) ) {
 		return;
-		
-	global $wp_admin_bar, $wpseo_front, $post;
-
-	if ( is_object($wpseo_front) ) {
-		$url = $wpseo_front->canonical( false );
-	} else {
-		$url = '';
-	}
-	
-	if ( isset($post) && is_object($post) ) {
-		$focuskw 	= wpseo_get_value('focuskw', $post->ID);
-	} else {
-		$focuskw = '';
 	}
 
-	$wp_admin_bar->add_menu( array( 'id' => 'wpseo-menu', 'title' => __( 'SEO', 'wordpress-seo' ), 'href' => get_admin_url('admin.php?page=wpseo_dashboard'), ) );
+	global $wp_admin_bar, $post;
 
-	$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-menu', 'id' => 'wpseo-kwresearch', 'title' => __( 'Keyword Research', 'wordpress-seo' ), '#', ) );
+	$url = WPSEO_Frontend::get_instance()->canonical( false );
 
-	$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-kwresearch', 'id' => 'wpseo-adwordsexternal', 'title' => __( 'AdWords External' ), 'href' => 'https://adwords.google.com/select/KeywordToolExternal', 'meta' => array('target' => '_blank') ) );
-	$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-kwresearch', 'id' => 'wpseo-googleinsights', 'title' => __( 'Google Insights' ), 'href' => 'http://www.google.com/insights/search/#q='.urlencode($focuskw).'&cmpt=q', 'meta' => array('target' => '_blank') ) );
-	$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-kwresearch', 'id' => 'wpseo-wordtracker', 'title' => __( 'SEO Book' ), 'href' => 'http://tools.seobook.com/keyword-tools/seobook/?keyword='.urlencode($focuskw), 'meta' => array('target' => '_blank') ) );
+	$focuskw = '';
+	$score   = '';
+	$seo_url = get_admin_url( null, 'admin.php?page=wpseo_dashboard' );
 
-	if ( !is_admin() ) {
-		$cleanurl = preg_replace('/^https?%3A%2F%2F/','', urlencode($url));
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-menu', 'id' => 'wpseo-analysis', 'title' => __( 'Analyze this page', 'wordpress-seo'  ), '#', ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-analysis', 'id' => 'wpseo-inlinks-y', 'title' => __( 'Check Inlinks (Yahoo!)', 'wordpress-seo'  ), 'href' => 'https://siteexplorer.search.yahoo.com/search?p='.$cleanurl.'&bwm=i&bwmo=d&bwmf=u', 'meta' => array('target' => '_blank') ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-analysis', 'id' => 'wpseo-inlinks-ose', 'title' => __( 'Check Inlinks (OSE)', 'wordpress-seo'  ), 'href' => 'http://www.opensiteexplorer.org/'.str_replace('/','%252F',preg_replace('/^https?:\/\//','',$url)).'/a!links', 'meta' => array('target' => '_blank') ) );	
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-analysis', 'id' => 'wpseo-kwdensity', 'title' => __( 'Check Keyword Density', 'wordpress-seo'  ), 'href' => 'http://tools.davidnaylor.co.uk/keyworddensity/index.php?url='.$url.'&keyword='.urlencode($focuskw), 'meta' => array('target' => '_blank') ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-analysis', 'id' => 'wpseo-cache', 'title' => __( 'Check Google Cache', 'wordpress-seo'  ), 'href' => 'http://webcache.googleusercontent.com/search?strip=1&q=cache:'.$url, 'meta' => array('target' => '_blank') ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-analysis', 'id' => 'wpseo-header', 'title' => __( 'Check Headers', 'wordpress-seo'  ), 'href' => 'http://quixapp.com/headers/?r='.urlencode($url), 'meta' => array('target' => '_blank') ) );
+	if ( ( is_singular() || ( is_admin() && in_array( $GLOBALS['pagenow'], array(
+						'post.php',
+						'post-new.php',
+					), true ) ) ) && isset( $post ) && is_object( $post ) && apply_filters( 'wpseo_use_page_analysis', true ) === true
+	) {
+		$focuskw    = WPSEO_Meta::get_value( 'focuskw', $post->ID );
+		$perc_score = WPSEO_Meta::get_value( 'linkdex', $post->ID );
+		$calc_score = WPSEO_Utils::calc( $perc_score, '/', 10, true );
+		$txtscore   = WPSEO_Utils::translate_score( $calc_score );
+		$title      = WPSEO_Utils::translate_score( $calc_score, false );
+		$score      = '<div title="' . esc_attr( $title ) . '" class="' . esc_attr( 'wpseo-score-icon ' . $txtscore . ' ' . $perc_score ) . '"></div>';
+
+		$seo_url = get_edit_post_link( $post->ID );
+		if ( $txtscore !== 'na' ) {
+			$seo_url .= '#wpseo_linkdex';
+		}
+	}
+
+	$wp_admin_bar->add_menu( array(
+			'id'    => 'wpseo-menu',
+			'title' => __( 'SEO', 'wordpress-seo' ) . $score,
+			'href'  => $seo_url,
+		) );
+	$wp_admin_bar->add_menu( array(
+			'parent' => 'wpseo-menu',
+			'id'     => 'wpseo-kwresearch',
+			'title'  => __( 'Keyword Research', 'wordpress-seo' ),
+			'#',
+		) );
+	$wp_admin_bar->add_menu( array(
+			'parent' => 'wpseo-kwresearch',
+			'id'     => 'wpseo-adwordsexternal',
+			'title'  => __( 'AdWords External', 'wordpress-seo' ),
+			'href'   => 'http://adwords.google.com/keywordplanner',
+			'meta'   => array( 'target' => '_blank' )
+		) );
+	$wp_admin_bar->add_menu( array(
+			'parent' => 'wpseo-kwresearch',
+			'id'     => 'wpseo-googleinsights',
+			'title'  => __( 'Google Insights', 'wordpress-seo' ),
+			'href'   => 'http://www.google.com/insights/search/#q=' . urlencode( $focuskw ) . '&cmpt=q',
+			'meta'   => array( 'target' => '_blank' )
+		) );
+	$wp_admin_bar->add_menu( array(
+			'parent' => 'wpseo-kwresearch',
+			'id'     => 'wpseo-wordtracker',
+			'title'  => __( 'SEO Book', 'wordpress-seo' ),
+			'href'   => 'http://tools.seobook.com/keyword-tools/seobook/?keyword=' . urlencode( $focuskw ),
+			'meta'   => array( 'target' => '_blank' )
+		) );
+
+	if ( ! is_admin() ) {
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-menu',
+				'id'     => 'wpseo-analysis',
+				'title'  => __( 'Analyze this page', 'wordpress-seo' ),
+				'#',
+			) );
+		if ( is_string( $url ) ) {
+			// @todo [JRF => whomever] check if this url shouldn't be encoded either with urlencode or with esc_url or something
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-inlinks-ose',
+					'title'  => __( 'Check Inlinks (OSE)', 'wordpress-seo' ),
+					'href'   => '//moz.com/researchtools/ose/links?site=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-kwdensity',
+					'title'  => __( 'Check Keyword Density', 'wordpress-seo' ),
+					'href'   => '//www.zippy.co.uk/keyworddensity/index.php?url=' . urlencode( $url ) . '&keyword=' . urlencode( $focuskw ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-cache',
+					'title'  => __( 'Check Google Cache', 'wordpress-seo' ),
+					'href'   => '//webcache.googleusercontent.com/search?strip=1&q=cache:' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-header',
+					'title'  => __( 'Check Headers', 'wordpress-seo' ),
+					'href'   => '//quixapp.com/headers/?r=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-richsnippets',
+					'title'  => __( 'Check Rich Snippets', 'wordpress-seo' ),
+					'href'   => '//www.google.com/webmasters/tools/richsnippets?q=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-facebookdebug',
+					'title'  => __( 'Facebook Debugger', 'wordpress-seo' ),
+					'href'   => '//developers.facebook.com/tools/debug/og/object?q=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-pinterestvalidator',
+					'title'  => __( 'Pinterest Rich Pins Validator', 'wordpress-seo' ),
+					'href'   => '//developers.pinterest.com/rich_pins/validator/?link=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-htmlvalidation',
+					'title'  => __( 'HTML Validator', 'wordpress-seo' ),
+					'href'   => '//validator.w3.org/check?uri=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-cssvalidation',
+					'title'  => __( 'CSS Validator', 'wordpress-seo' ),
+					'href'   => '//jigsaw.w3.org/css-validator/validator?uri=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-pagespeed',
+					'title'  => __( 'Google Page Speed Test', 'wordpress-seo' ),
+					'href'   => '//developers.google.com/speed/pagespeed/insights/?url=' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-analysis',
+					'id'     => 'wpseo-modernie',
+					'title'  => __( 'Modern IE Site Scan', 'wordpress-seo' ),
+					'href'   => '//www.modern.ie/en-us/report#' . urlencode( $url ),
+					'meta'   => array( 'target' => '_blank' )
+				) );
+		}
 	}
 
 	$admin_menu = false;
-	if ( function_exists('is_multisite') && is_multisite() ) {
-		$options = get_site_option('wpseo_ms');
-		if ( is_array( $options ) && isset( $options['access'] ) && $options['access'] == 'superadmin' ) {
-			if ( is_super_admin() )
-				$admin_menu = true;
-			else
-				$admin_menu = false;
-		} else {
-			if ( current_user_can('manage_options') )
-				$admin_menu = true;
-			else
-				$admin_menu = false;
-		}
-	} else {
-		if ( current_user_can('manage_options') )
+	if ( is_multisite() ) {
+		$options = get_site_option( 'wpseo_ms' );
+		if ( $options['access'] === 'superadmin' && is_super_admin() ) {
 			$admin_menu = true;
+		}
+		elseif ( current_user_can( 'manage_options' ) ) {
+			$admin_menu = true;
+		}
 	}
-	
-	if ( $admin_menu ) {
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-menu', 'id' => 'wpseo-settings', 'title' => __( 'SEO Settings', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_titles'), ) );
+	elseif ( current_user_can( 'manage_options' ) ) {
+		$admin_menu = true;
+	}
 
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-titles', 'title' => __( 'Titles', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_titles'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-social', 'title' => __( 'Social', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_social'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-indexation', 'title' => __( 'Indexation', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_indexation'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-xml', 'title' => __( 'XML Sitemaps', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_xml'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-permalinks', 'title' => __( 'Permalinks', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_permalinks'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-internal-links', 'title' => __( 'Internal Links', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_internal-links'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'wpseo-settings', 'id' => 'wpseo-rss', 'title' => __( 'RSS', 'wordpress-seo'  ), 'href' => admin_url('admin.php?page=wpseo_rss'), ) );	
-	}	
+	// @todo: add links to bulk title and bulk description edit pages
+	if ( $admin_menu ) {
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-menu',
+				'id'     => 'wpseo-settings',
+				'title'  => __( 'SEO Settings', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_titles' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-titles',
+				'title'  => __( 'Titles &amp; Metas', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_titles' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-social',
+				'title'  => __( 'Social', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_social' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-xml',
+				'title'  => __( 'XML Sitemaps', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_xml' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-permalinks',
+				'title'  => __( 'Permalinks', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_permalinks' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-internal-links',
+				'title'  => __( 'Internal Links', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_internal-links' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-rss',
+				'title'  => __( 'RSS', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_rss' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-import',
+				'title'  => esc_html__( 'Import & Export', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_import' ),
+			) );
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo_bulk-editor',
+				'title'  => __( 'Bulk Editor', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_bulk-editor' ),
+			) );
+
+		// Check where to add the edit files page
+		if ( WPSEO_Utils::allow_system_file_edit() === true ) {
+			$wp_admin_bar->add_menu( array(
+					'parent' => 'wpseo-settings',
+					'id'     => 'wpseo-files',
+					'title'  => __( 'Edit Files', 'wordpress-seo' ),
+					'href'   => network_admin_url( 'admin.php?page=wpseo_files' ),
+				) ); // will auto-use admin_url if not in multi-site
+		}
+
+		$wp_admin_bar->add_menu( array(
+				'parent' => 'wpseo-settings',
+				'id'     => 'wpseo-licenses',
+				'title'  => __( 'Extensions', 'wordpress-seo' ),
+				'href'   => admin_url( 'admin.php?page=wpseo_licenses' ),
+			) );
+	}
 }
+
 add_action( 'admin_bar_menu', 'wpseo_admin_bar_menu', 95 );
 
-function wpseo_stopwords_check( $haystack, $checkingUrl = false ) {
-	// TODO: Make it possible to internationalize this
-	$stopWords = array("a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because","been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do","does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't","have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me","more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our","ours "," ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some","such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they","they'd","they'll","they're","they've","this","those","through","to","too","under","until","up","very","was","wasn't","we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while","who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves");
-	
-	foreach ( $stopWords as $stopWord ) {
-		// If checking a URL remove the single quotes
-		if ( $checkingUrl )
-			$stopWord = str_replace( "'", "", $stopWord );
-
-		// Check whether the stopword appears as a whole word
-		$res = preg_match( "/\b".$stopWord."\b/i", $haystack, $match );
-		if ( $res > 0 )
-			return $stopWord;
+/**
+ * Enqueue a tiny bit of CSS to show so the adminbar shows right.
+ */
+function wpseo_admin_bar_css() {
+	if ( is_admin_bar_showing() && is_singular() ) {
+		wp_enqueue_style( 'boxes', plugins_url( 'css/adminbar' . WPSEO_CSSJS_SUFFIX . '.css', WPSEO_FILE ), array(), WPSEO_VERSION );
 	}
-	
-	return false;
+}
+
+add_action( 'wp_enqueue_scripts', 'wpseo_admin_bar_css' );
+
+/**
+ * Allows editing of the meta fields through weblog editors like Marsedit.
+ *
+ * @param array $allcaps Capabilities that must all be true to allow action.
+ * @param array $cap     Array of capabilities to be checked, unused here.
+ * @param array $args    List of arguments for the specific cap to be checked.
+ *
+ * @return array $allcaps
+ */
+function allow_custom_field_edits( $allcaps, $cap, $args ) {
+	// $args[0] holds the capability
+	// $args[2] holds the post ID
+	// $args[3] holds the custom field
+
+	// Make sure the request is to edit or add a post meta (this is usually also the second value in $cap,
+	// but this is safer to check).
+	if ( in_array( $args[0], array( 'edit_post_meta', 'add_post_meta' ) ) ) {
+		// Only allow editing rights for users who have the rights to edit this post and make sure
+		// the meta value starts with _yoast_wpseo (WPSEO_Meta::$meta_prefix).
+		if ( ( isset( $args[2] ) && current_user_can( 'edit_post', $args[2] ) ) && ( ( isset( $args[3] ) && $args[3] !== '' ) && strpos( $args[3], WPSEO_Meta::$meta_prefix ) === 0 ) ) {
+			$allcaps[ $args[0] ] = true;
+		}
+	}
+
+	return $allcaps;
+}
+
+add_filter( 'user_has_cap', 'allow_custom_field_edits', 0, 3 );
+
+/**
+ * Display an import message when robots-meta is active
+ *
+ * @since 1.5.0
+ */
+function wpseo_robots_meta_message() {
+	// check if robots meta is running
+	if ( ( ! isset( $_GET['page'] ) || 'wpseo_import' !== $_GET['page'] ) && is_plugin_active( 'robots-meta/robots-meta.php' ) ) {
+		add_action( 'admin_notices', 'wpseo_import_robots_meta_notice' );
+	}
+}
+
+add_action( 'admin_init', 'wpseo_robots_meta_message' );
+
+/**
+ * Handle deactivation Robots Meta
+ *
+ * @since 1.5.0
+ */
+function wpseo_disable_robots_meta() {
+	if ( isset( $_GET['deactivate_robots_meta'] ) && $_GET['deactivate_robots_meta'] === '1' && is_plugin_active( 'robots-meta/robots-meta.php' ) ) {
+		// Deactivate the plugin
+		deactivate_plugins( 'robots-meta/robots-meta.php' );
+
+		// show notice that robots meta has been deactivated
+		add_action( 'admin_notices', 'wpseo_deactivate_robots_meta_notice' );
+
+		// Clean up the referrer url for later use
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'deactivate_robots_meta' ), sanitize_text_field( $_SERVER['REQUEST_URI'] ) );
+		}
+	}
+}
+
+add_action( 'admin_init', 'wpseo_disable_robots_meta' );
+
+/**
+ * Handle deactivation & import of AIOSEO data
+ *
+ * @since 1.5.0
+ */
+function wpseo_aioseo_message() {
+	// check if aioseo is running
+	if ( ( ! isset( $_GET['page'] ) || 'wpseo_import' != $_GET['page'] ) && is_plugin_active( 'all-in-one-seo-pack/all_in_one_seo_pack.php' ) ) {
+		add_action( 'admin_notices', 'wpseo_import_aioseo_setting_notice' );
+	}
+}
+
+add_action( 'admin_init', 'wpseo_aioseo_message' );
+
+/**
+ * Handle deactivation AIOSEO
+ *
+ * @since 1.5.0
+ */
+function wpseo_disable_aioseo() {
+	if ( isset( $_GET['deactivate_aioseo'] ) && $_GET['deactivate_aioseo'] === '1' && is_plugin_active( 'all-in-one-seo-pack/all_in_one_seo_pack.php' ) ) {
+		// Deactivate AIO
+		deactivate_plugins( 'all-in-one-seo-pack/all_in_one_seo_pack.php' );
+
+		// show notice that aioseo has been deactivated
+		add_action( 'admin_notices', 'wpseo_deactivate_aioseo_notice' );
+
+		// Clean up the referrer url for later use
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'deactivate_aioseo' ), sanitize_text_field( $_SERVER['REQUEST_URI'] ) );
+		}
+	}
+}
+
+add_action( 'admin_init', 'wpseo_disable_aioseo' );
+
+/**
+ * Throw a notice to import AIOSEO.
+ *
+ * @since 1.4.8
+ */
+function wpseo_import_aioseo_setting_notice() {
+	echo '<div class="error"><p>' . sprintf( esc_html__( 'The plugin All-In-One-SEO has been detected. Do you want to %simport its settings%s.', 'wordpress-seo' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_import&import=1&importaioseo=1&_wpnonce=' . wp_create_nonce( 'wpseo-import' ) ) ) . '">', '</a>' ) . '</p></div>';
+}
+
+/**
+ * Throw a notice to inform the user AIOSEO has been deactivated
+ *
+ * @since 1.4.8
+ */
+function wpseo_deactivate_aioseo_notice() {
+	echo '<div class="updated"><p>' . esc_html__( 'All-In-One-SEO has been deactivated', 'wordpress-seo' ) . '</p></div>';
+}
+
+/**
+ * Throw a notice to import Robots Meta.
+ *
+ * @since 1.4.8
+ */
+function wpseo_import_robots_meta_notice() {
+	echo '<div class="error"><p>' . sprintf( esc_html__( 'The plugin Robots-Meta has been detected. Do you want to %simport its settings%s.', 'wordpress-seo' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_import&import=1&importrobotsmeta=1&_wpnonce=' . wp_create_nonce( 'wpseo-import' ) ) ) . '">', '</a>' ) . '</p></div>';
+}
+
+/**
+ * Throw a notice to inform the user Robots Meta has been deactivated
+ *
+ * @since 1.4.8
+ */
+function wpseo_deactivate_robots_meta_notice() {
+	echo '<div class="updated"><p>' . esc_html__( 'Robots-Meta has been deactivated', 'wordpress-seo' ) . '</p></div>';
+}
+
+/********************** DEPRECATED FUNCTIONS **********************/
+
+/**
+ * Set the default settings.
+ *
+ * @deprecated 1.5.0
+ * @deprecated use WPSEO_Options::initialize()
+ * @see        WPSEO_Options::initialize()
+ */
+function wpseo_defaults() {
+	_deprecated_function( __FUNCTION__, 'WPSEO 1.5.0', 'WPSEO_Options::initialize()' );
+	WPSEO_Options::initialize();
+}
+
+/**
+ * Translates a decimal analysis score into a textual one.
+ *
+ * @deprecated 1.5.6.1
+ * @deprecated use WPSEO_Utils::translate_score()
+ * @see WPSEO_Utils::translate_score()
+ *
+ * @param int  $val       The decimal score to translate.
+ * @param bool $css_value Whether to return the i18n translated score or the CSS class value.
+ *
+ * @return string
+ */
+function wpseo_translate_score( $val, $css_value = true ) {
+	_deprecated_function( __FUNCTION__, 'WPSEO 1.5.6.1', 'WPSEO_Utils::translate_score()' );
+	return WPSEO_Utils::translate_score();
 }
 
 
+/**
+ * Check whether file editing is allowed for the .htaccess and robots.txt files
+ *
+ * @deprecated 1.5.6.1
+ * @deprecated use WPSEO_Utils::allow_system_file_edit()
+ * @see WPSEO_Utils::allow_system_file_edit()
+ *
+ * @internal current_user_can() checks internally whether a user is on wp-ms and adjusts accordingly.
+ *
+ * @return bool
+ */
+function wpseo_allow_system_file_edit() {
+	_deprecated_function( __FUNCTION__, 'WPSEO 1.5.6.1', 'WPSEO_Utils::allow_system_file_edit()' );
+	return WPSEO_Utils::allow_system_file_edit();
+}
